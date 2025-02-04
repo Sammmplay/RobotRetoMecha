@@ -6,8 +6,8 @@ using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
+    
     [SerializeField] CinemachineVirtualCamera _cinemachineVCamera;
-    public Transform target; // el objeto que la camara seguira;
     public Transform cameraPivot; //punto vacio como referencia de la camera;
     public float sensitivy = 1.0f;
     public float minXRotation = -30f;
@@ -15,16 +15,17 @@ public class CameraController : MonoBehaviour
     public float rotationSpeed = 200f;
 
     [SerializeField] Vector2 _lookImput;
-    float currentYaw;
-    float currentPitch;
+    float currentYaw; //rotacion horizontal de la camara al rededor del personaje 
+    float currentPitch; // rotacion vertical de la camara, limitada para evitar movimientos bruscos
 
     private void Start() {
         _cinemachineVCamera = FindObjectOfType<CinemachineVirtualCamera>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        currentYaw = transform.eulerAngles.y;
     }
     private void Update() {
-        if(_cinemachineVCamera != null &&target != null) {
+        if(_cinemachineVCamera != null && cameraPivot != null) {
             RotationCamera();
         }
     }
@@ -38,11 +39,6 @@ public class CameraController : MonoBehaviour
         currentPitch -= deltaY;
         currentPitch = Mathf.Clamp(currentPitch, minXRotation, maxXRotation);
         //aplicamos la rotacion al pivit en lugar del jugador directamente
-        cameraPivot.position = target.position;
-        cameraPivot.rotation = Quaternion.Euler(currentPitch, currentYaw, 0f);
-        // hacer que la camara sigua el pivot en lugar del jugador
-
-        transform.position = cameraPivot.position;
-        transform.rotation = cameraPivot.rotation;
+        cameraPivot.localRotation = Quaternion.Euler(currentPitch, currentYaw, 0f);
     }
 }
