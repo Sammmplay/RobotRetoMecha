@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class StatePersecucion : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    ControladorVision vision;
+    ControladorNavMesh navMesh;
+    StateMachine maquinaDeEstados;
+    private void Awake() {
+        vision = GetComponent<ControladorVision>();
+        navMesh = GetComponent<ControladorNavMesh>();
+        maquinaDeEstados = GetComponent<StateMachine>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void OnEnable() {
+        maquinaDeEstados.ChancheMaterial(2);
+    }
+    private void Update() {
+        RaycastHit hit;
+        if(!vision.PuedeVeraLJugador(out hit , true)) {
+            maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoAlerta);
+            return;
+        }
+        //navMesh.ActualizarPuntoDestinoNavMeshAgent();
+
     }
 }

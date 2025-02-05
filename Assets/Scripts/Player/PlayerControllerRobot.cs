@@ -12,7 +12,6 @@ public class PlayerControllerRobot : MonoBehaviour
     Rigidbody _rb;
     GameObject _mainCamera;
     public float _velocity = 2;
-    [SerializeField] float _rotationSpped = 10f;
     [SerializeField] float _rotationVelocity;
     [SerializeField] float RotationSmoothTime;
     [SerializeField] Vector3 _inputValue;

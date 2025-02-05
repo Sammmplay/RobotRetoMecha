@@ -7,9 +7,9 @@ public class StateMachine : MonoBehaviour
     public MonoBehaviour _estadoPatrulla;
     public MonoBehaviour _estadoAlerta;
     public MonoBehaviour _estadoPersecucion;
-
     public MonoBehaviour _estadoInicial;
-
+    public MeshRenderer meshIndicador;
+    [SerializeField] Material[] materialIndicador;
     MonoBehaviour estadoActual;
 
     private void Start() {
@@ -27,5 +27,8 @@ public class StateMachine : MonoBehaviour
         
         estadoActual = nuevoEstado;
         estadoActual.enabled = true;
+    }
+    public void ChancheMaterial(int index) {
+        meshIndicador.material = materialIndicador[index];
     }
 }
