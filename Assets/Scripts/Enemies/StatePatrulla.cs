@@ -13,7 +13,8 @@ public class StatePatrulla : MonoBehaviour
     NavMeshAgent _navmesh;
     [SerializeField] float distanceSlowSpeed = 5f;
     [SerializeField] float velNormal = 3f;
-    [SerializeField] float distanciaAlWaypoint;
+    public float distanciaAlWaypoint;
+
     float velReducida = 1f;
     private void Awake() {
         controladorNavMesh = GetComponent<ControladorNavMesh>();
@@ -33,6 +34,7 @@ public class StatePatrulla : MonoBehaviour
             ActualizarWayPointDestino();
         }
             distanciaAlWaypoint = Vector3.Distance(transform.position, wayPoint[siguienteWaypoint].transform.position);
+
         if(distanciaAlWaypoint < distanceSlowSpeed) {
             _navmesh.speed = velReducida;
         } else {

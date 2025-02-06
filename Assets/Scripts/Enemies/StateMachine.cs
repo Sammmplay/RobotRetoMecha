@@ -17,6 +17,7 @@ public class StateMachine : MonoBehaviour
         _estadoAlerta = GetComponent<StateAlerta>();
         _estadoPersecucion = GetComponent<StatePersecucion>();
         ACtivarEstado(_estadoInicial);
+        CountEnemies.Instance.InicializarContador();
     }
 
     public void ACtivarEstado(MonoBehaviour nuevoEstado) {

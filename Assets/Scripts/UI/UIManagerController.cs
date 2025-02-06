@@ -1,13 +1,25 @@
 using SD;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UIManagerController : MonoBehaviour
 {
     public static UIManagerController Instance;
+    
     [SerializeField] Vector3 scaleButtons =  new Vector3(1.2f,1.2f,1.2f);
-
+    [Header("Gameplay")]
+    [SerializeField] GameObject _numEnemiesGO;
+    public TextMeshProUGUI _numEnemies;
+    private void Start() {
+        if (Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        } else {
+            Destroy(gameObject);
+        }
+    }
     public void ScaleButtons(RectTransform rect) {
         LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack);
     }

@@ -10,6 +10,7 @@ public class StateAlerta : MonoBehaviour
     StateMachine maquinaDeEstados;
     ControladorVision controladorVision;
     ControladorNavMesh navMesh;
+    Vector3 ultimoPuntoDetectado;
     private void Awake() {
         maquinaDeEstados = GetComponent<StateMachine>();
         controladorVision = GetComponent<ControladorVision>();
@@ -26,11 +27,27 @@ public class StateAlerta : MonoBehaviour
             maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoPersecucion);
             return;
         }
-        transform.Rotate(0, velocidadGiroBusqueda * Time.deltaTime, 0);    
+        if(ultimoPuntoDetectado!=Vector3.zero){
+        //calcular la direccion hacia el jugador
+        Vector3 direccionHaciaEljugador = (ultimoPuntoDetectado - transform.position);
+        direccionHaciaEljugador.y = 0;
+        //Rotar suavemente hacia la ultima posicion detectada
+        Quaternion rotacionObjetivo = Quaternion.LookRotation(direccionHaciaEljugador);
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, velocidadGiroBusqueda * Time.deltaTime);
+        }
         tiempoBuscando += Time.deltaTime;
         if(tiempoBuscando >= duracionBusqueda) {
             maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoPatrulla);
             return;
+        }
+    }
+    private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag("Player")) {
+            ultimoPuntoDetectado = other.transform.position;
+            return;
+        } else {
+            ultimoPuntoDetectado = Vector3.zero;
         }
     }
 }

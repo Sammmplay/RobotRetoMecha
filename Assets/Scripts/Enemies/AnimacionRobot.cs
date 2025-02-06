@@ -3,24 +3,30 @@ using UnityEngine.AI;
 
 public class AnimacionRobot : MonoBehaviour
 {
+    StatePatrulla _statePatrulla;
+    NavMeshAgent _navMesh;
+    Animator _anim;
+    ControladorNavMesh _navMeshControlador;
     [Header("AnimacionRueda")]
     [SerializeField] GameObject _rueda;
     [SerializeField] float radioRueda = 0.00576233f;
     [Header("Animacion Cuerpo")]
-    [SerializeField] Transform _cuerpoSuperior;
-    [SerializeField] float inclinacionMaxima = 30f;
-    [SerializeField] float velocidadDeInclinacion = 5f;
-
+    
     [SerializeField] Vector3 directionNavmesh;
-    Animator _anim;
+    
     [SerializeField] float velocidad;
-    NavMeshAgent _navMesh;
+    [SerializeField] float _distanceBrake;
+    [SerializeField] bool _isBrake;
+    [SerializeField] bool _isAcceleration;
     private void Start() {
         _navMesh = GetComponent<NavMeshAgent>();
         _anim = GetComponent<Animator>();
+        _statePatrulla = GetComponent<StatePatrulla>();
+        _navMeshControlador = GetComponent<ControladorNavMesh>();
     }
     private void Update() {
         velocidad = _navMesh.velocity.magnitude;
+        _anim.SetFloat("Velocidad", velocidad);
         AnimRueda();
         Animaciones();
     }
@@ -33,12 +39,19 @@ public class AnimacionRobot : MonoBehaviour
     }
 
     
-    public void Animaciones() {
+    public void Animaciones() { //animacines en estado persecucion
         directionNavmesh = _navMesh.velocity.normalized;
-        if(_navMesh.speed > 3 && _navMesh.speed<3.5f) {
-            _anim.SetBool("Acelerando", true);
-        } else if (_navMesh.speed>=3.5f) {
-            _anim.SetBool("Acelerando", false);
+        if (_statePatrulla.distanciaAlWaypoint <= _distanceBrake && _statePatrulla.distanciaAlWaypoint>=1f) {
+            _isBrake = true;
         }
+        if (_navMeshControlador.hemosLLegado()) {
+            _isBrake = false;
+            _isAcceleration = true;
+            
+        }else if (velocidad >= 3.5f) {
+            _isAcceleration = false;
+        }
+        _anim.SetBool("Frenado", _isBrake);
+        _anim.SetBool("Acelerando", _isAcceleration);
     }
 }
