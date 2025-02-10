@@ -7,7 +7,8 @@ public class CountEnemies : MonoBehaviour
     public static CountEnemies Instance;
     [SerializeField] int _count;
     public int _countTotal;
-    private void Start() {
+
+    private void Awake() {
         Instance = this;
     }
     public void InicializarContador() {
