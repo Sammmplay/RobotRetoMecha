@@ -44,6 +44,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
 
     [Tooltip("Useful for rough ground")]
     public float GroundedOffset = -0.14f;
+    public float groundedOffsetZ = 0.15f;
 
     [Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
     public float GroundedRadius = 0.28f;
@@ -126,7 +127,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     private void GroundedCheck() {
         // set sphere position, with offset
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
-            transform.position.z);
+            transform.position.z-groundedOffsetZ);
         Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
             QueryTriggerInteraction.Ignore);
     }

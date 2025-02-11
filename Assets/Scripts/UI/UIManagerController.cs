@@ -15,6 +15,11 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] GameObject _numEnemiesGO;
     public TextMeshProUGUI _numEnemies;
 
+    [Header("Cronometro")]
+    [SerializeField] float _cronometro;
+    float _timer;
+    [SerializeField] bool _activeCronometro;
+    [SerializeField] TextMeshProUGUI _textCronometro;
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -23,7 +28,13 @@ public class UIManagerController : MonoBehaviour
             Destroy(gameObject);
         }
         InicializarMenus();
+        
+        ActualizarTextoCronometro();
     }
+    private void Update() {
+        Cronometro();
+    }
+    
     public void InicializarMenus() {
         int indexScene = SceneManager.GetActiveScene().buildIndex;
         for (int i = 0; i < _panels.Length; i++) {
@@ -48,6 +59,15 @@ public class UIManagerController : MonoBehaviour
             default:
                 break;
         }
+    }
+    public void Cronometro() {
+        if (_activeCronometro) {
+            _cronometro -= Time.deltaTime;
+            ActualizarTextoCronometro();
+        }
+    }
+    void ActualizarTextoCronometro() {
+        _textCronometro.text = string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_cronometro / 60), Mathf.FloorToInt(_cronometro % 60));
     }
     public void ScaleButtons(RectTransform rect) {
         LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack);
