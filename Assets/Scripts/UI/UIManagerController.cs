@@ -1,6 +1,4 @@
 using SD;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,17 +7,20 @@ public class UIManagerController : MonoBehaviour
 {
     public static UIManagerController Instance;
     public RectTransform[] _panels;
-    public GameObject _jostycs;
     [SerializeField] Vector3 scaleButtons =  new Vector3(1.2f,1.2f,1.2f);
     [Header("Gameplay")]
-    [SerializeField] GameObject _numEnemiesGO;
+    
     public TextMeshProUGUI _numEnemies;
 
     [Header("Cronometro")]
     [SerializeField] float _cronometro;
-    float _timer;
+    
     [SerializeField] bool _activeCronometro;
     [SerializeField] TextMeshProUGUI _textCronometro;
+    [Header("Puntuacion")]
+    [SerializeField] int _puntuacion;
+    [SerializeField] int _maxPunt;
+    [SerializeField] TextMeshProUGUI _textPuntuacion;
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -45,15 +46,7 @@ public class UIManagerController : MonoBehaviour
                 _panels[0].gameObject.SetActive(true);
                 break;
             case 1:
-                if(Application.platform == RuntimePlatform.WindowsPlayer || 
-                    Application.platform == RuntimePlatform.WindowsEditor) {
-                    Debug.Log("Juego Ejecutandose En PC");
-                    _jostycs.SetActive(false);
-                    
-                }else if (Application.platform == RuntimePlatform.Android) {
-                    Debug.Log("Juego ejecutandose en Android");
-                    _jostycs.SetActive(true);
-                }
+                
                 _panels[1].gameObject.SetActive(true);
                 break;
             default:
@@ -68,6 +61,10 @@ public class UIManagerController : MonoBehaviour
     }
     void ActualizarTextoCronometro() {
         _textCronometro.text = string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_cronometro / 60), Mathf.FloorToInt(_cronometro % 60));
+    }
+    public void AddPuntuacion(int cant) {
+        _puntuacion += cant;
+        _textPuntuacion.text = "Puntuacion: " + _puntuacion;
     }
     public void ScaleButtons(RectTransform rect) {
         LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack);
@@ -85,4 +82,13 @@ public class UIManagerController : MonoBehaviour
 Application.Quit(); // cierra la aplicacion en una build
 #endif
     }
+
+    #region Sistema de Guardado de puntuacion 
+    void SaveMaxPunt() {
+        if (_puntuacion > _maxPunt) {
+            PlayerPrefs.SetInt("MaxPunt", _maxPunt);
+        }
+        
+    }
+    #endregion
 }

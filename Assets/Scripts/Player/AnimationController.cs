@@ -7,14 +7,17 @@ using UnityEngine.Windows;
 
 public class AnimationController : MonoBehaviour
 {
-    public Transform _rueda;
     Animator _anim;
     StarterAssetsInputs _input;
     CharacterController _char;
-    [SerializeField] Vector2 _dir;
 
+    [Header("AnimRueda")]
+    public Transform _rueda;
+    [SerializeField] Vector2 _dir;
     [SerializeField] float _velocity;
     [SerializeField] float radioRueda;
+    [Header("AnimSmoke")]
+    [SerializeField] ParticleSystem _humo;
     private void Start() {
         _char = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
@@ -36,6 +39,7 @@ public class AnimationController : MonoBehaviour
         float revolicionesXSegundo = _velocity / circunferenciaRueda;
         float gradosPorSegundo = revolicionesXSegundo * 360f;
         _rueda.transform.Rotate(Vector3.forward * gradosPorSegundo * Time.deltaTime);
+       
         //Quaternion rotacion = Quaternion.AngleAxis(gradosPorSegundo * Time.deltaTime, Vector3.forward);
         //_rueda.transform.rotation = rotacion*_rueda.transform.rotation;
     }

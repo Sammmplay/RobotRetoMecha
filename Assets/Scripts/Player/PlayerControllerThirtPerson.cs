@@ -68,6 +68,21 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     [Tooltip("For locking the camera position on all axis")]
     public bool LockCameraPosition = false;
 
+    //Disparo
+    [Header("Disparo")]
+    [SerializeField] GameObject _bullet;
+    [SerializeField] GameObject _bulletPrefab;
+    [SerializeField] List<CombatEnemies> enemies = new List<CombatEnemies>();
+    
+    [SerializeField] Transform _dirBullet;
+    [SerializeField] Vector3 _minScale;
+    [SerializeField] Vector3 _maxScale;
+    bool _fire = false;
+    [SerializeField] float _chargeTime;
+    [SerializeField] float _recolding;
+    [SerializeField] float _distanceEnemi;
+    [SerializeField] float _distanceEnemiMax;
+
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -88,7 +103,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     private GameObject _mainCamera;
 
     private const float _threshold = 0.01f;
-
+    public GameObject _jostycs;
     private bool IsCurrentDeviceMouse {
         get {
 #if ENABLE_INPUT_SYSTEM
@@ -103,6 +118,15 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         // get a reference to our main camera
         if (_mainCamera == null) {
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        }
+        if (Application.platform == RuntimePlatform.WindowsPlayer ||
+                    Application.platform == RuntimePlatform.WindowsEditor) {
+            Debug.Log("Juego Ejecutandose En PC");
+            _jostycs.SetActive(false);
+
+        } else if (Application.platform == RuntimePlatform.Android) {
+            Debug.Log("Juego ejecutandose en Android");
+            _jostycs.SetActive(true);
         }
     }
     private void Start() {
@@ -119,6 +143,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         GroundedCheck();
         Move();
         Fallout();
+        Fire();
     }
 
     private void LateUpdate() {
@@ -241,5 +266,80 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         if (lfAngle < -360f) lfAngle += 360f;
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
+    }
+
+    void Fire() {
+        
+        if (_input._fire) {
+            if (!_fire) {
+                StartCharging();
+            } else {
+                ChargeBullet();
+            }
+        }else if (_fire) { // si se suelta el boton
+            ReleaseCharged();
+        }
+    }
+    void StartCharging() {
+        _fire = true;
+        _chargeTime = 0;
+        //Instanciamos la bala
+        _bulletPrefab = Instantiate(_bullet, _dirBullet);
+        _bulletPrefab.transform.localScale = _minScale;
+
+    }
+    void ChargeBullet() {
+        _chargeTime += Time.deltaTime;
+        float scaleProgress = Mathf.Clamp01(_chargeTime / _recolding);
+        if (_bulletPrefab) {
+            _bulletPrefab.transform.localScale = Vector3.Lerp(_minScale, _maxScale, scaleProgress);
+
+        }
+    }
+    void ReleaseCharged() {
+        _fire = false;
+
+        //busca el enemigos mas cercano
+        CombatEnemies closestEnemy = FindClosesEnemy();
+        if (_bulletPrefab) {
+            if(_chargeTime >= _recolding) { // disparo carga completado
+                _bulletPrefab.GetComponent<BulletController>().enabled = true;
+                if (closestEnemy != null) {
+                    _bulletPrefab.GetComponent<BulletController>().DetectTransform(closestEnemy.transform);
+                } else {
+                    _bulletPrefab.GetComponent<BulletController>().TransformDirection(transform.forward);
+
+                }
+            } else {
+                Destroy(_bulletPrefab);
+            }
+        }
+        _bulletPrefab = null;
+    }
+    CombatEnemies FindClosesEnemy() {
+        CombatEnemies closestEnemy = null;
+        float closestDistance = Mathf.Infinity;//comenzamos con una distancia muy grande
+
+        for (int i = 0; i < enemies.Count; i++) {
+            float distance = Vector3.Distance(transform.position, enemies[i].transform.position);
+            if(distance < closestDistance) {
+                closestDistance = distance;
+                closestEnemy = enemies[i];//guardamos la referencia al enemigo 
+            }
+        }
+        return closestEnemy;
+    }
+    private void OnTriggerEnter(Collider other) {
+        CombatEnemies enemy = other.GetComponent<CombatEnemies>();
+        if (enemy != null) {
+            enemies.Add(enemy);
+        }
+    }
+    private void OnTriggerExit(Collider other) {
+        CombatEnemies enemy = other.GetComponent<CombatEnemies>();
+        if(enemy != null) {
+            // si lo tiene lo eliminamos de la lista de enemigos
+            enemies.Remove(enemy);
+        }
     }
 }
