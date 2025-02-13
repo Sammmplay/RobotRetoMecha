@@ -65,6 +65,7 @@ public class UIManagerController : MonoBehaviour
     public void AddPuntuacion(int cant) {
         _puntuacion += cant;
         _textPuntuacion.text = "Puntuacion: " + _puntuacion;
+        SaveMaxPunt();
     }
     public void ScaleButtons(RectTransform rect) {
         LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack);
