@@ -14,6 +14,7 @@ public class CombatEnemies : MonoBehaviour
         CountEnemies.Instance.AddContador();
         if (_efects != null) {
             GameObject _efect = Instantiate(_efects[0], transform.position, Quaternion.identity);
+            
         }
         StateMachine _state = GetComponent<StateMachine>();
         _state.enabled = false;

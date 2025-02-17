@@ -80,9 +80,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     bool _fire = false;
     [SerializeField] float _chargeTime;
     [SerializeField] float _recolding;
-    [SerializeField] float _distanceEnemi;
-    [SerializeField] float _distanceEnemiMax;
-
+    [SerializeField] bool _canFire = true;
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -133,6 +131,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
+        _animator = GetComponent<Animator>();
 #if ENABLE_INPUT_SYSTEM
         _playerInput = GetComponent<PlayerInput>();
 #else
@@ -269,26 +268,34 @@ public class PlayerControllerThirtPerson : MonoBehaviour
 
     void Fire() {
         
-        if (_input._fire) {
+        if (_input._fire) {//preciona la tecla de Disparo
+            
             if (!_fire) {
+                if (!_canFire) return;
                 StartCharging();
             } else {
                 ChargeBullet();
+
             }
         }else if (_fire) { // si se suelta el boton
             ReleaseCharged();
+            
         }
     }
-    void StartCharging() {
+    void StartCharging() {//precionamos la tecla de disparo 
+        _animator.SetInteger("Fire", 0);
         _fire = true;
+        _canFire = false;
         _chargeTime = 0;
         //Instanciamos la bala
         _bulletPrefab = Instantiate(_bullet, _dirBullet);
+        
         _bulletPrefab.transform.localScale = _minScale;
 
     }
     void ChargeBullet() {
         _chargeTime += Time.deltaTime;
+        
         float scaleProgress = Mathf.Clamp01(_chargeTime / _recolding);
         if (_bulletPrefab) {
             _bulletPrefab.transform.localScale = Vector3.Lerp(_minScale, _maxScale, scaleProgress);
@@ -297,11 +304,12 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     }
     void ReleaseCharged() {
         _fire = false;
-
+        
         //busca el enemigos mas cercano
         CombatEnemies closestEnemy = FindClosesEnemy();
         if (_bulletPrefab) {
             if(_chargeTime >= _recolding) { // disparo carga completado
+                _animator.SetInteger("Fire", 2);
                 _bulletPrefab.GetComponent<BulletController>().enabled = true;
                 if (closestEnemy != null) {
                     _bulletPrefab.GetComponent<BulletController>().DetectTransform(closestEnemy.transform);
@@ -311,9 +319,14 @@ public class PlayerControllerThirtPerson : MonoBehaviour
                 }
             } else {
                 Destroy(_bulletPrefab);
+                _animator.SetInteger("Fire", 1);
+                _canFire = true;
             }
         }
         _bulletPrefab = null;
+    }
+    public void ISCanFire() {
+        _canFire = true;
     }
     CombatEnemies FindClosesEnemy() {
         CombatEnemies closestEnemy = null;

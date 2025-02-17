@@ -21,6 +21,8 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] int _puntuacion;
     [SerializeField] int _maxPunt;
     [SerializeField] TextMeshProUGUI _textPuntuacion;
+    [Header("PausaGamplay")]
+    [SerializeField] bool _isPlaying;
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -34,6 +36,7 @@ public class UIManagerController : MonoBehaviour
     }
     private void Update() {
         Cronometro();
+        MenuPause();
     }
     
     public void InicializarMenus() {
@@ -46,13 +49,13 @@ public class UIManagerController : MonoBehaviour
                 _panels[0].gameObject.SetActive(true);
                 break;
             case 1:
-                
                 _panels[1].gameObject.SetActive(true);
                 break;
             default:
                 break;
         }
     }
+    
     public void Cronometro() {
         if (_activeCronometro) {
             _cronometro -= Time.deltaTime;
@@ -67,11 +70,18 @@ public class UIManagerController : MonoBehaviour
         _textPuntuacion.text = "Puntuacion: " + _puntuacion;
         SaveMaxPunt();
     }
+
+    void MenuPause() {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        _isPlaying = !_isPlaying;
+        _panels[2].gameObject.SetActive(_isPlaying);
+        Time.timeScale = _isPlaying ? 0 : 1;
+    }
     public void ScaleButtons(RectTransform rect) {
-        LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack);
+        LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
     }
     public void SacleRestartButtons(RectTransform rect) {
-        LeanTween.scale(rect, Vector3.one, 0.2f).setEase(LeanTweenType.easeInBack);
+        LeanTween.scale(rect, Vector3.one, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
     }
     public void Jugar() {
         LoadEscenChangeManager.instance.LoadEscene(1);
