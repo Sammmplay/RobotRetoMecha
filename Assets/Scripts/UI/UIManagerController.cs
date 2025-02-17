@@ -70,18 +70,22 @@ public class UIManagerController : MonoBehaviour
         _textPuntuacion.text = "Puntuacion: " + _puntuacion;
         SaveMaxPunt();
     }
-
+    #region Menu Pause.....
     void MenuPause() {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        _isPlaying = !_isPlaying;
-        _panels[2].gameObject.SetActive(_isPlaying);
-        Time.timeScale = _isPlaying ? 0 : 1;
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            _isPlaying = !_isPlaying;
+            _panels[2].gameObject.SetActive(_isPlaying);
+            //Time.timeScale = _isPlaying ? 0 : 1;
+        }
+
     }
+
+    #endregion
     public void ScaleButtons(RectTransform rect) {
-        LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
+        LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack);
     }
     public void SacleRestartButtons(RectTransform rect) {
-        LeanTween.scale(rect, Vector3.one, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
+        LeanTween.scale(rect, Vector3.one, 0.2f).setEase(LeanTweenType.easeInBack);
     }
     public void Jugar() {
         LoadEscenChangeManager.instance.LoadEscene(1);

@@ -49,6 +49,7 @@ namespace SD
                 yield return null;
             }
             //esperar 0.5segundos adicionales despues de que la carga este completada
+            UIManagerController.Instance.InicializarMenus();
             yield return new WaitForSeconds(0.5f);
             //desactivar el objeto 
             EsceneMenu.SetActive(false);
