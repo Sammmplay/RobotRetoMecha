@@ -132,6 +132,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
         _animator = GetComponent<Animator>();
+        
 #if ENABLE_INPUT_SYSTEM
         _playerInput = GetComponent<PlayerInput>();
 #else

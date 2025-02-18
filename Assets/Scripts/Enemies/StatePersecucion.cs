@@ -38,7 +38,7 @@ public class StatePersecucion : MonoBehaviour
             transform.Rotate(0, velocidadGiroBusqueda * Time.deltaTime, 0);
             tiempoBuscando += Time.deltaTime;
             if(tiempoBuscando>= duracionBusqueda) {
-                if (navMesh.perseguirObjetivo.TryGetComponent<PlayerCombat>(out PlayerCombat _script)) {
+                if (navMesh.perseguirObjetivo.TryGetComponent<GameManager>(out GameManager _script)) {
                     _script.DestoyPlayer();
                 }
                 //PlayerCombat.instance.
