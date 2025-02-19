@@ -45,7 +45,7 @@ public class StatePatrulla : MonoBehaviour
     private void OnEnable() {
         ActualizarWayPointDestino();
         maquinaDeEstados.ChancheMaterial(0);
-
+        maquinaDeEstados.Playsound(true, 2);
     }
     void ActualizarWayPointDestino() {
         controladorNavMesh.ActualizarPuntoDestinoNavMeshAgent(wayPoint[siguienteWaypoint].position);
@@ -53,6 +53,7 @@ public class StatePatrulla : MonoBehaviour
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Player")) {
             maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoAlerta);
+            maquinaDeEstados.Playsound(false, 0);
         }
     }
 }

@@ -11,7 +11,8 @@ public class CombatEnemies : MonoBehaviour
     [SerializeField] GameObject[] _efects;
     public void Dead() {
         UIManagerController.Instance.AddPuntuacion(_punt);
-        CountEnemies.Instance.AddContador();
+        GameManager.Instance.AddContador();
+        
         if (_efects != null) {
             GameObject _efect = Instantiate(_efects[0], transform.position, Quaternion.identity);
             

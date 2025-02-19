@@ -10,6 +10,8 @@ public class StateMachine : MonoBehaviour
     public MonoBehaviour _estadoInicial;
     public MeshRenderer meshIndicador;
     [SerializeField] Material[] materialIndicador;
+    AudioSource _source;
+    public AudioClip[] _clip;
     MonoBehaviour estadoActual;
 
     private void Start() {
@@ -17,12 +19,15 @@ public class StateMachine : MonoBehaviour
         _estadoAlerta = GetComponent<StateAlerta>();
         _estadoPersecucion = GetComponent<StatePersecucion>();
         ACtivarEstado(_estadoInicial);
-        CountEnemies.Instance.InicializarContador();
+        GameManager.Instance.InicializarContador();
+        
+        _source = GetComponent<AudioSource>();
+        
     }
 
     public void ACtivarEstado(MonoBehaviour nuevoEstado) {
 
-        if (estadoActual!=null) {
+        if (estadoActual != null) {
             estadoActual.enabled = false;
         }
         
@@ -31,5 +36,13 @@ public class StateMachine : MonoBehaviour
     }
     public void ChancheMaterial(int index) {
         meshIndicador.material = materialIndicador[index];
+    }
+    public void Playsound(bool _play, int index) {
+        _source.clip = _clip[index];
+        if (_play) {
+           _source.Play();
+        } else {
+            _source.Stop();
+        }
     }
 }

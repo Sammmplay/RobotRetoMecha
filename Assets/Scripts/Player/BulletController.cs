@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class BulletController : MonoBehaviour
 {
@@ -11,7 +12,9 @@ public class BulletController : MonoBehaviour
     [SerializeField] float _rotationSpeed = 5f;
     [SerializeField] float _frecuency=5f; // frecuencia de oscilacion
     [SerializeField] float magnitude = 0.5f; // Amplitud de oscilacion
-    [SerializeField] float _distanceEnemi;
+    [Header("BallDestroy")]
+    [SerializeField] float totalDistance = 0;
+    [SerializeField] float distanceMax = 15;
     [SerializeField] GameObject _efectsCollision;
     Vector3 _dir;
     Vector3 starPosition;
@@ -21,6 +24,7 @@ public class BulletController : MonoBehaviour
         _col.enabled = true;
         Debug.Log("starBullet");
         starPosition = transform.position;
+
     }
     private void OnEnable() {
         transform.SetParent(null);
@@ -40,6 +44,11 @@ public class BulletController : MonoBehaviour
             Vector3 oscillation = transform.right * Mathf.Sin(Time.time * _frecuency) * magnitude;
             //aplicar la velocidad en la direccion del misil + oscilacion
             _rb.velocity = (transform.forward * _speed) + oscillation;
+        }
+        float distanceThisFrame = Vector3.Distance(starPosition, transform.position);
+        totalDistance = distanceThisFrame;
+        if (totalDistance >= distanceMax) {
+            Destroy(gameObject);
         }
     }
     public void TransformDirection(Vector3 dir) {

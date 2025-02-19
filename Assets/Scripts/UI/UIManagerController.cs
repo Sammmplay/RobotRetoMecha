@@ -60,9 +60,7 @@ public class UIManagerController : MonoBehaviour
                 break;
         }
     }
-    public void Empezar() {
-        GameManager.Instance.Empezar();
-    }
+
     void Cronometro() {
         if (_activeCronometro) {
             _cronometro -= Time.deltaTime;
@@ -116,14 +114,22 @@ public class UIManagerController : MonoBehaviour
         LeanTween.move(rec, new Vector3(0, 714, 0), 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true).setOnComplete(() => rec.gameObject.SetActive(false));
     }
     #endregion
+
+    #region Animaciones de la UI
     public void ScaleButtons(RectTransform rect) {
         LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
     }
     public void SacleRestartButtons(RectTransform rect) {
         LeanTween.scale(rect, Vector3.one, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
     }
+    #endregion
+
+    #region Acciones botones de la UI
     public void Jugar(int index) {
         LoadEscenChangeManager.instance.LoadEscene(index);
+    }
+    public void Empezar() {
+        GameManager.Instance.Empezar();
     }
     public void ExitApplication() {
 #if UNITY_EDITOR
@@ -132,6 +138,7 @@ public class UIManagerController : MonoBehaviour
 Application.Quit(); // cierra la aplicacion en una build
 #endif
     }
+    #endregion
 
     #region Sistema de Guardado de puntuacion 
     void SaveMaxPunt() {

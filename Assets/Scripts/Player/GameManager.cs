@@ -11,6 +11,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] ParticleSystem _effectStartgame;
     public bool _starGame = false;
     Button _empezar;
+    [Header("ContadorEnemigos")]
+    [SerializeField] int _count;
+    public int _countTotal;
+    [Header("Congratulations")]
+    [SerializeField] ParticleSystem[] _efectsWinGame;
+    [SerializeField] RectTransform panelWinGame;
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -40,5 +46,22 @@ public class GameManager : MonoBehaviour
             _playerController.gameObject.SetActive(false);
         }
 
+    }
+
+    public void InicializarContador() {
+        _countTotal++;
+        UIManagerController.Instance._numEnemies.text = _count.ToString() +
+            " / " + _countTotal;
+    }
+    public void AddContador() {
+        _count++;
+        UIManagerController.Instance._numEnemies.text = _count.ToString() +
+            " / " + _countTotal;
+        if (_count >= _countTotal) {
+            Congratulations();
+        }
+    }
+    void Congratulations() {
+        UIManagerController.Instance.ActivarCronometro(false);
     }
 }

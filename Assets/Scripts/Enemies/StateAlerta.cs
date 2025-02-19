@@ -19,6 +19,8 @@ public class StateAlerta : MonoBehaviour
     private void OnEnable() {
         maquinaDeEstados.ChancheMaterial(1);
         navMesh.DetenerNavMeshAgent();
+        
+        maquinaDeEstados.Playsound(true, 1);
         tiempoBuscando = 0;
     }
     private void Update() {
@@ -39,6 +41,7 @@ public class StateAlerta : MonoBehaviour
         tiempoBuscando += Time.deltaTime;
         if(tiempoBuscando >= duracionBusqueda) {
             maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoPatrulla);
+            maquinaDeEstados.Playsound(false, 0);
             return;
         }
     }

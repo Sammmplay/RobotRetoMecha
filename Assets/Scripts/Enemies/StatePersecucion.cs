@@ -19,6 +19,7 @@ public class StatePersecucion : MonoBehaviour
 
     private void OnEnable() {
         maquinaDeEstados.ChancheMaterial(2);
+        maquinaDeEstados.Playsound(true, 3);
     }
     private void Update() {
         float distancePoint = Vector3.Distance(transform.position, navMesh.perseguirObjetivo.transform.position);
@@ -26,6 +27,7 @@ public class StatePersecucion : MonoBehaviour
         if(!vision.PuedeVeraLJugador(out hit , true)) {
             maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoAlerta);
             navMesh.perseguirObjetivo = null;
+            maquinaDeEstados.Playsound(false, 0);
             return;
         }
         navMesh.ActualizarPuntoDestinoNavMeshAgent();

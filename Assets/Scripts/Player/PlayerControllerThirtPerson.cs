@@ -332,12 +332,14 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     CombatEnemies FindClosesEnemy() {
         CombatEnemies closestEnemy = null;
         float closestDistance = Mathf.Infinity;//comenzamos con una distancia muy grande
-
+        enemies.RemoveAll(enemy => enemy == null);
         for (int i = 0; i < enemies.Count; i++) {
-            float distance = Vector3.Distance(transform.position, enemies[i].transform.position);
-            if(distance < closestDistance) {
-                closestDistance = distance;
-                closestEnemy = enemies[i];//guardamos la referencia al enemigo 
+            if(enemies !=null){
+                float distance = Vector3.Distance(transform.position, enemies[i].transform.position);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestEnemy = enemies[i];//guardamos la referencia al enemigo 
+                }
             }
         }
         return closestEnemy;

@@ -26,7 +26,10 @@ public class AnimacionRobot : MonoBehaviour
     }
     private void Update() {
         velocidad = _navMesh.velocity.magnitude;
-        _anim.SetFloat("Velocidad", velocidad);
+        if (_anim != null) {
+            _anim.SetFloat("Velocidad", velocidad);
+        }
+        
         AnimRueda();
         Animaciones();
     }
@@ -35,12 +38,13 @@ public class AnimacionRobot : MonoBehaviour
         float circunferenciaRueda = 2 * Mathf.PI * radioRueda;
         float revolicionesXSegundo = velocidad / circunferenciaRueda;
         float gradosPorSegundo = revolicionesXSegundo * 360f;
-        _rueda.transform.Rotate(Vector3.right * gradosPorSegundo * Time.deltaTime);
+        _rueda.transform.Rotate(directionNavmesh * gradosPorSegundo * Time.deltaTime);
     }
 
     
     public void Animaciones() { //animacines en estado persecucion
-        directionNavmesh = _navMesh.velocity.normalized;
+        
+        
         if (_statePatrulla.distanciaAlWaypoint <= _distanceBrake && _statePatrulla.distanciaAlWaypoint>=1f) {
             _isBrake = true;
         }
@@ -51,7 +55,10 @@ public class AnimacionRobot : MonoBehaviour
         }else if (velocidad >= 3.5f) {
             _isAcceleration = false;
         }
-        _anim.SetBool("Frenado", _isBrake);
-        _anim.SetBool("Acelerando", _isAcceleration);
+        if (_anim != null) {
+            _anim.SetBool("Frenado", _isBrake);
+            _anim.SetBool("Acelerando", _isAcceleration);
+        }
+        
     }
 }
