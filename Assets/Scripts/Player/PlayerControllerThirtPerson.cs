@@ -117,15 +117,18 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         if (_mainCamera == null) {
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
-        if (Application.platform == RuntimePlatform.WindowsPlayer ||
-                    Application.platform == RuntimePlatform.WindowsEditor) {
-            Debug.Log("Juego Ejecutandose En PC");
-            _jostycs.SetActive(false);
-
-        } else if (Application.platform == RuntimePlatform.Android) {
-            Debug.Log("Juego ejecutandose en Android");
+#if UNITY_ANDROID
+        _jostycs.SetActive(true);
+#else
+_jostycs.SetActive(false);
+#endif
+        /*if (Application.isMobilePlatform) {
+            Debug.Log("Juego ejecutandose en android ");
             _jostycs.SetActive(true);
-        }
+        } else {
+            Debug.Log("Juego Ejecutandose en PC o editor");
+            _jostycs.SetActive(false);
+        }*/
     }
     private void Start() {
         _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;

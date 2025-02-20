@@ -38,9 +38,10 @@ public class StateMachine : MonoBehaviour
         meshIndicador.material = materialIndicador[index];
     }
     public void Playsound(bool _play, int index) {
-        _source.clip = _clip[index];
+        if (_source == null) return;
         if (_play) {
-           _source.Play();
+            _source.clip = _clip[index];
+            _source.Play();
         } else {
             _source.Stop();
         }

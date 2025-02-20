@@ -11,8 +11,12 @@ public class ControladorNavMesh : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
     public void ActualizarPuntoDestinoNavMeshAgent(Vector3 puntoDestino) {
-        navMeshAgent.destination = puntoDestino;
-        navMeshAgent.isStopped = false;
+        if (navMeshAgent == null) return;
+        if(puntoDestino != null) {
+            navMeshAgent.destination = puntoDestino;
+            navMeshAgent.isStopped = false;
+        }
+        
     }
     public void DetenerNavMeshAgent() {
         navMeshAgent.isStopped = true;

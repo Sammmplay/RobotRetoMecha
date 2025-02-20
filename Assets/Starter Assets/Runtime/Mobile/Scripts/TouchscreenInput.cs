@@ -18,7 +18,7 @@ public class TouchscreenInput : MonoBehaviour
     [Header("Events")]
     public UnityEvent<Vector2> MoveEvent;
     public UnityEvent<Vector2> LookEvent;
-    public UnityEvent<bool> JumpEvent;
+    public UnityEvent<bool> FireEvent;
     public UnityEvent<bool> SprintEvent;
     
     private UIDocument m_Document;
@@ -62,8 +62,8 @@ public class TouchscreenInput : MonoBehaviour
         });
 
         var jumpButton = m_Document.rootVisualElement.Q<VisualElement>("ButtonJump");
-        jumpButton.RegisterCallback<PointerEnterEvent>(evt => { JumpEvent.Invoke(true); });
-        jumpButton.RegisterCallback<PointerLeaveEvent>(evt => { JumpEvent.Invoke(false); });
+        jumpButton.RegisterCallback<PointerEnterEvent>(evt => { FireEvent.Invoke(true); });
+        jumpButton.RegisterCallback<PointerLeaveEvent>(evt => { FireEvent.Invoke(false); });
         
         var sprintButton = m_Document.rootVisualElement.Q<VisualElement>("ButtonSprint");
         sprintButton.RegisterCallback<PointerEnterEvent>(evt => { SprintEvent.Invoke(true); });
