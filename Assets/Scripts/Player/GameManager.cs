@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +16,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] int _count;
     public int _countTotal;
     [Header("Congratulations")]
-    [SerializeField] ParticleSystem[] _efectsWinGame;
     [SerializeField] RectTransform panelWinGame;
     private void Awake() {
         if (Instance == null) {
@@ -62,6 +62,17 @@ public class GameManager : MonoBehaviour
         }
     }
     void Congratulations() {
+        FindObjectOfType<PlayerControllerThirtPerson>().enabled = false;
         UIManagerController.Instance.ActivarCronometro(false);
+        UIManagerController.Instance._panels[4].gameObject.SetActive(true);
+        //Puntuacion 
+        TextMeshProUGUI _puntCurrent = GameObject.Find("PuntCurrentNum").GetComponent<TextMeshProUGUI>();
+        _puntCurrent.text = UIManagerController.Instance.SetPuntuacion().ToString()+ " Pts";
+        //Puntuacion Maxima 
+        TextMeshProUGUI _puntMax = GameObject.Find("PuntMaxNum").GetComponent<TextMeshProUGUI>();
+        _puntMax.text = PlayerPrefs.GetInt("MaxPunt",0).ToString() + " Pts";
+        // Tiempo de juego
+        TextMeshProUGUI _time = GameObject.Find("TiempoNum").GetComponent<TextMeshProUGUI>();
+        _time.text = UIManagerController.Instance.FormatCronometro();
     }
 }

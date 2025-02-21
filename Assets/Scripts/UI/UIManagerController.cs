@@ -37,6 +37,11 @@ public class UIManagerController : MonoBehaviour
         InicializarMenus();
         
         ActualizarTextoCronometro();
+#if UNITY_ANDROID
+        Debug.Log("Iniciando Android");
+#else
+Debug.Log("Iniciando PC");
+#endif
     }
     private void Update() {
         Cronometro();
@@ -70,22 +75,29 @@ public class UIManagerController : MonoBehaviour
     public void ActivarCronometro(bool _active) {
         _activeCronometro = _active;
     }
-    void ActualizarTextoCronometro() {
+    public void ActualizarTextoCronometro() {
         _textCronometro.text = string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_cronometro / 60), Mathf.FloorToInt(_cronometro % 60));
+    }
+    public string FormatCronometro() {
+        return string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_cronometro / 60), Mathf.FloorToInt(_cronometro % 60));
     }
     public void AddPuntuacion(int cant) {
         _puntuacion += cant;
         _textPuntuacion.text = "Puntuacion: " + _puntuacion;
         SaveMaxPunt();
     }
+    public int SetPuntuacion() {
+        return _puntuacion;    
+    }
     #region Menu Pause.....
     void MenuPause() {
         if (Input.GetKeyDown(KeyCode.Escape)&& SceneManager.GetActiveScene().buildIndex != 0 && GameManager.Instance._starGame) {
             StarterAssetsInputs _inpu = FindObjectOfType<StarterAssetsInputs>();
-            PlayerInput _plInput= FindObjectOfType<PlayerInput>();
+            PlayerInput _plInput = FindObjectOfType<PlayerInput>();
+            Button _reanudar = GameObject.Find("Reanudar").GetComponent<Button>();
             _inpu.SetCursorState(false);
             _panels[2].gameObject.SetActive(true);
-            Button _reanudar = GameObject.Find("Reanudar").GetComponent<Button>();
+            
             if (_isPlaying) {
                 _reanudar.Select();
             }
@@ -103,8 +115,14 @@ public class UIManagerController : MonoBehaviour
         Time.timeScale = 1;
         _isPlaying = true;
         _panels[2].gameObject.SetActive(false);
-        _plInput.enabled = true;
-        
+#if UNITY_ANDROID
+        _plInput.enabled = false;
+#else
+_plInput.enabled = true;
+#endif
+
+
+
         _inpu.SetCursorState(true);
     }
     public void MovePreguntaDeSeguridad(RectTransform rec) {

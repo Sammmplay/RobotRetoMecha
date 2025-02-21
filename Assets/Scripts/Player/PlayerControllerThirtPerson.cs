@@ -117,11 +117,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         if (_mainCamera == null) {
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
-#if UNITY_ANDROID
-        _jostycs.SetActive(true);
-#else
-_jostycs.SetActive(false);
-#endif
+
         /*if (Application.isMobilePlatform) {
             Debug.Log("Juego ejecutandose en android ");
             _jostycs.SetActive(true);
@@ -140,6 +136,13 @@ _jostycs.SetActive(false);
         _playerInput = GetComponent<PlayerInput>();
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+#endif
+#if UNITY_ANDROID
+        _jostycs.SetActive(true);
+        _playerInput.enabled = false;
+#else
+_jostycs.SetActive(false);
+_playerInput.enabled = true;
 #endif
     }
     private void Update() {

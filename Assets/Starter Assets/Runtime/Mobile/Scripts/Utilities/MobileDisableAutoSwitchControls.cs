@@ -31,11 +31,6 @@ public class MobileDisableAutoSwitchControls : MonoBehaviour
         playerInput.neverAutoSwitchControlSchemes = true;
     }
 
-    private void Update()
-    {
-        Debug.Log(playerInput.currentControlScheme);
-    }
-
 #endif
     
 }

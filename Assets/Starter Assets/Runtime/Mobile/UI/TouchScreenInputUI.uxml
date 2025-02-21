@@ -16,7 +16,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="ButtonJump" class="touchscreen-button">
-            <ui:VisualElement name="ButtonImage" class="button-icon" style="flex-grow: 1;" />
+            <ui:VisualElement name="FireAttack" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/LeanTween/Examples/Textures/PowerUpStar.png?fileID=21300000&amp;guid=70141d51621e24facbca9196bbde84b4&amp;type=3#PowerUpStar&quot;); -unity-background-image-tint-color: rgb(55, 55, 55); opacity: 0.6; -unity-background-scale-mode: stretch-to-fill; -unity-slice-left: 15; -unity-slice-top: 15; -unity-slice-right: 15; -unity-slice-bottom: 15;" />
         </ui:VisualElement>
         <ui:VisualElement name="ButtonSprint" class="touchscreen-button">
             <ui:VisualElement name="ButtonImage" class="button-icon" style="flex-grow: 1;" />
