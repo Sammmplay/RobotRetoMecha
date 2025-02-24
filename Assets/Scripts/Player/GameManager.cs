@@ -1,3 +1,5 @@
+using Cinemachine;
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,15 +10,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] Transform root;
-    [SerializeField] GameObject player;
+    [SerializeField] GameObject _prefabPlayer;
+    [SerializeField] GameObject _playerDeadPrefab;
+    [SerializeField] public GameObject player;
     [SerializeField] ParticleSystem _effectStartgame;
     public bool _starGame = false;
-    Button _empezar;
     [Header("ContadorEnemigos")]
     [SerializeField] int _count;
     public int _countTotal;
-    [Header("Congratulations")]
-    [SerializeField] RectTransform panelWinGame;
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -31,23 +33,34 @@ public class GameManager : MonoBehaviour
     IEnumerator StartGame() {
         _effectStartgame.Play();
         yield return new WaitForSeconds(2);
+        InstantiatePlayer();
         player.SetActive(true);
-        CameraManager.instance.FollowCam(root);
         player.transform.SetParent(null);
+        root = GameObject.Find("RootCamera").GetComponent<Transform>();
+        CameraManager.instance.FollowCam(root);
         UIManagerController.Instance.ActivarCronometro(true);
         _starGame = true;
         yield return new WaitForSeconds(3);
         _effectStartgame.Stop();
 
     }
+    void InstantiatePlayer() {
+        player = Instantiate(_prefabPlayer, Vector3.zero, Quaternion.identity);
+    }
     public void DestoyPlayer() {
         Debug.Log("Destruido");
-        if (TryGetComponent<PlayerControllerThirtPerson>(out PlayerControllerThirtPerson _playerController)) {
-            _playerController.gameObject.SetActive(false);
-        }
-
+        Destroy(player);
+        GameObject _deadplayer = Instantiate(_playerDeadPrefab, player.transform.position, player.transform.rotation);
+        StartCoroutine(RestarPlayer());
     }
+    IEnumerator RestarPlayer() {
 
+        yield return new WaitForSeconds(6);
+        CinemachineVirtualCamera v_cam= FindObjectOfType<CinemachineVirtualCamera>();
+        v_cam.transform.position = new Vector3(0, 3.5f, -3.5f);
+        v_cam.transform.rotation = Quaternion.Euler(35, 0, 0);
+        StartCoroutine(StartGame());
+    }
     public void InicializarContador() {
         _countTotal++;
         UIManagerController.Instance._numEnemies.text = _count.ToString() +
@@ -61,18 +74,39 @@ public class GameManager : MonoBehaviour
             Congratulations();
         }
     }
+    public void RestartCountenemies() {
+        _count = 0;
+        _countTotal = 0;
+        UIManagerController.Instance._numEnemies.text = _count.ToString() + " / "+_countTotal;
+    }
     void Congratulations() {
         FindObjectOfType<PlayerControllerThirtPerson>().enabled = false;
+        
         UIManagerController.Instance.ActivarCronometro(false);
+        UIManagerController.Instance._isPlaying = false;
+        _starGame = false;
+        StartCoroutine(CongratulationsWait());
+
+        }
+    IEnumerator CongratulationsWait() {
+        yield return new WaitForSeconds(2);
+        FindObjectOfType<StarterAssetsInputs>().SetCursorState(false);
         UIManagerController.Instance._panels[4].gameObject.SetActive(true);
+        player.transform.SetParent(this.transform);
+        player.transform.localPosition = Vector3.zero;
+        player.gameObject.SetActive(false);
+        Button _salir = GameObject.Find("Salir").GetComponent<Button>();
+        _salir.Select();
         //Puntuacion 
-        TextMeshProUGUI _puntCurrent = GameObject.Find("PuntCurrentNum").GetComponent<TextMeshProUGUI>();
-        _puntCurrent.text = UIManagerController.Instance.SetPuntuacion().ToString()+ " Pts";
+        TextMeshProUGUI _puntCurrent = GameObject.Find("PuntNumText").GetComponent<TextMeshProUGUI>();
+
         //Puntuacion Maxima 
-        TextMeshProUGUI _puntMax = GameObject.Find("PuntMaxNum").GetComponent<TextMeshProUGUI>();
-        _puntMax.text = PlayerPrefs.GetInt("MaxPunt",0).ToString() + " Pts";
+        TextMeshProUGUI _puntMax = GameObject.Find("PuntMaxNumText").GetComponent<TextMeshProUGUI>();
+
         // Tiempo de juego
-        TextMeshProUGUI _time = GameObject.Find("TiempoNum").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI _time = GameObject.Find("TimeNumText").GetComponent<TextMeshProUGUI>();
+        _puntCurrent.text = UIManagerController.Instance.SetPuntuacion().ToString() + " Pts";
+        _puntMax.text = PlayerPrefs.GetInt("MaxPunt", 0).ToString() + " Pts";
         _time.text = UIManagerController.Instance.FormatCronometro();
     }
 }

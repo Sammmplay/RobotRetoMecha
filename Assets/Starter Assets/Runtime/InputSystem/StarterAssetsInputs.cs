@@ -71,10 +71,6 @@ namespace StarterAssets
 		public void FireInput(bool newState) {
 			_fire = newState;
 		}
-		/*private void OnApplicationFocus(bool hasFocus)
-		{
-			SetCursorState(cursorLocked);
-		}*/
 
 		public void SetCursorState(bool newState)
 		{

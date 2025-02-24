@@ -45,7 +45,7 @@ namespace SD
                 float progrees = Mathf.Clamp01(asyncOperation.progress / 0.9f);
                 Carga.value = progrees;
                 float porcentaje = progrees * 100;
-                _progressText.text = porcentaje.ToString() + "%";
+                _progressText.text = "Cargando "+porcentaje.ToString() + "%";
                 yield return null;
             }
             //esperar 0.5segundos adicionales despues de que la carga este completada

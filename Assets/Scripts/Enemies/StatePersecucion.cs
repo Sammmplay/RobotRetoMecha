@@ -10,7 +10,7 @@ public class StatePersecucion : MonoBehaviour
     [SerializeField] float velocidadGiroBusqueda = 50f;
     [SerializeField] float duracionBusqueda = 4f;
     [SerializeField] float distanceMin=8.0f;
-    float tiempoBuscando;
+    [SerializeField] float tiempoBuscando;
     private void Awake() {
         vision = GetComponent<ControladorVision>();
         navMesh = GetComponent<ControladorNavMesh>();
@@ -20,8 +20,10 @@ public class StatePersecucion : MonoBehaviour
     private void OnEnable() {
         maquinaDeEstados.ChancheMaterial(2);
         maquinaDeEstados.Playsound(true, 3);
+        tiempoBuscando = 0;
     }
     private void Update() {
+        
         float distancePoint = Vector3.Distance(transform.position, navMesh.perseguirObjetivo.transform.position);
         RaycastHit hit;
         if(!vision.PuedeVeraLJugador(out hit , true)) {
@@ -36,12 +38,15 @@ public class StatePersecucion : MonoBehaviour
         } else {
             navMesh.DetenerNavMeshAgent();
         }
-        if(distancePoint<= distanceMin) {
+        if(distancePoint <= distanceMin) {
             transform.Rotate(0, velocidadGiroBusqueda * Time.deltaTime, 0);
             tiempoBuscando += Time.deltaTime;
             if(tiempoBuscando>= duracionBusqueda) {
-                if (navMesh.perseguirObjetivo.TryGetComponent<GameManager>(out GameManager _script)) {
+                GameManager _script = FindObjectOfType<GameManager>();
+                if (_script ) {
                     _script.DestoyPlayer();
+                    navMesh.perseguirObjetivo=null;
+                    maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoPatrulla);
                 }
                 //PlayerCombat.instance.
                 return;

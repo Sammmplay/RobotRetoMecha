@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using SD;
 using StarterAssets;
 using TMPro;
@@ -18,7 +19,7 @@ public class UIManagerController : MonoBehaviour
 
     [Header("Cronometro")]
     [SerializeField] float _cronometro;
-    
+    float _countCronometro;
     [SerializeField] bool _activeCronometro;
     [SerializeField] TextMeshProUGUI _textCronometro;
     [Header("Puntuacion")]
@@ -26,7 +27,7 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] int _maxPunt;
     [SerializeField] TextMeshProUGUI _textPuntuacion;
     [Header("PausaGamplay")]
-    [SerializeField] bool _isPlaying;
+    [SerializeField] public bool _isPlaying;
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -35,13 +36,17 @@ public class UIManagerController : MonoBehaviour
             Destroy(gameObject);
         }
         InicializarMenus();
-        
+        _countCronometro = _cronometro;
         ActualizarTextoCronometro();
 #if UNITY_ANDROID
         Debug.Log("Iniciando Android");
 #else
 Debug.Log("Iniciando PC");
 #endif
+    }
+    private void Start() {
+        _maxPunt = PlayerPrefs.GetInt("MaxPunt", 0);
+
     }
     private void Update() {
         Cronometro();
@@ -68,23 +73,34 @@ Debug.Log("Iniciando PC");
 
     void Cronometro() {
         if (_activeCronometro) {
-            _cronometro -= Time.deltaTime;
+            _countCronometro -= Time.deltaTime;
             ActualizarTextoCronometro();
         }
     }
     public void ActivarCronometro(bool _active) {
         _activeCronometro = _active;
     }
+    public void StopCronometro() {
+        _activeCronometro = false;
+        _countCronometro = _cronometro;
+        ActualizarTextoCronometro();
+    }
     public void ActualizarTextoCronometro() {
-        _textCronometro.text = string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_cronometro / 60), Mathf.FloorToInt(_cronometro % 60));
+        _textCronometro.text = string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_countCronometro / 60), Mathf.FloorToInt(_countCronometro % 60));
     }
     public string FormatCronometro() {
-        return string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(_cronometro / 60), Mathf.FloorToInt(_cronometro % 60));
+        float cronometroText = _cronometro - _countCronometro;
+        
+        return string.Format("{0:00}m:{1:00}s", Mathf.FloorToInt(cronometroText / 60), Mathf.FloorToInt(cronometroText % 60));
     }
     public void AddPuntuacion(int cant) {
         _puntuacion += cant;
-        _textPuntuacion.text = "Puntuacion: " + _puntuacion;
+        
         SaveMaxPunt();
+    }
+    void RestarPunt() {
+        _puntuacion = 0;
+        _textPuntuacion.text = "Puntuacion: " + _puntuacion;
     }
     public int SetPuntuacion() {
         return _puntuacion;    
@@ -94,20 +110,24 @@ Debug.Log("Iniciando PC");
         if (Input.GetKeyDown(KeyCode.Escape)&& SceneManager.GetActiveScene().buildIndex != 0 && GameManager.Instance._starGame) {
             StarterAssetsInputs _inpu = FindObjectOfType<StarterAssetsInputs>();
             PlayerInput _plInput = FindObjectOfType<PlayerInput>();
-            Button _reanudar = GameObject.Find("Reanudar").GetComponent<Button>();
-            _inpu.SetCursorState(false);
             _panels[2].gameObject.SetActive(true);
-            
+            Button _reanudar = GameObject.Find("Reanudar").GetComponent<Button>();
+            if (_inpu != null) {
+                _inpu.SetCursorState(false);
+            }
             if (_isPlaying) {
-                _reanudar.Select();
+                if(_reanudar!= null) {
+                    _reanudar.Select();
+                }
+               
             }
             _isPlaying = false;
-            
-            
-            _plInput.enabled = false;
+
+            if (_plInput != null) {
+                _plInput.enabled = false;
+            }
             Time.timeScale = 0 ;
         }
-
     }
     public void Reanudar() {
         PlayerInput _plInput = FindObjectOfType<PlayerInput>();
@@ -116,20 +136,35 @@ Debug.Log("Iniciando PC");
         _isPlaying = true;
         _panels[2].gameObject.SetActive(false);
 #if UNITY_ANDROID
-        _plInput.enabled = false;
+if (_plInput != null) {
+_plInput.enabled = false;
+        }
+        
 #else
+        if (_plInput != null) {
 _plInput.enabled = true;
+        }
+
 #endif
 
 
-
-        _inpu.SetCursorState(true);
+        if (_inpu != null) {
+           _inpu.SetCursorState(true);
+        }
+       
     }
     public void MovePreguntaDeSeguridad(RectTransform rec) {
         LeanTween.move(rec,new Vector3(0, 356, 0),0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);
     }
     public void RestartPreguntaDeSeguridad(RectTransform rec) {
         LeanTween.move(rec, new Vector3(0, 714, 0), 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true).setOnComplete(() => rec.gameObject.SetActive(false));
+    }
+
+    public void Salir() { 
+        LoadEscenChangeManager.instance.LoadEscene(0);
+        GameManager.Instance.RestartCountenemies();
+        StopCronometro();
+        RestarPunt();
     }
     #endregion
 
@@ -161,7 +196,10 @@ Application.Quit(); // cierra la aplicacion en una build
     #region Sistema de Guardado de puntuacion 
     void SaveMaxPunt() {
         if (_puntuacion > _maxPunt) {
+            _maxPunt = _puntuacion;
             PlayerPrefs.SetInt("MaxPunt", _maxPunt);
+            
+            Debug.Log("Max Punt Guardado");
         }
         
     }

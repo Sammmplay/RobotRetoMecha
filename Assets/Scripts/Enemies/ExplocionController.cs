@@ -12,8 +12,7 @@ public class ExplocionController : MonoBehaviour
         Explosion();
     }
     void Explosion() {
-        Destroy(gameObject,_timeDestroy
-            );
+        Destroy(gameObject,_timeDestroy);
         Rigidbody[] _rb = GetComponentsInChildren<Rigidbody>();
         Vector3 pos = new Vector3(transform.position.x, transform.position.y - _offset, transform.position.z);
         for (int i = 0; i < _rb.Length; i++) {
