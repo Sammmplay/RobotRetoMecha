@@ -72,7 +72,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     [Header("Disparo")]
     [SerializeField] GameObject _bullet;
     [SerializeField] GameObject _bulletPrefab;
-    [SerializeField] List<CombatEnemies> enemies = new List<CombatEnemies>();
+    [SerializeField]public List<CombatEnemies> enemies = new List<CombatEnemies>();
     
     [SerializeField] Transform _dirBullet;
     [SerializeField] Vector3 _minScale;
@@ -117,21 +117,12 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         if (_mainCamera == null) {
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
-
-        /*if (Application.isMobilePlatform) {
-            Debug.Log("Juego ejecutandose en android ");
-            _jostycs.SetActive(true);
-        } else {
-            Debug.Log("Juego Ejecutandose en PC o editor");
-            _jostycs.SetActive(false);
-        }*/
     }
     private void Start() {
         _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
         _animator = GetComponent<Animator>();
-        _input.SetCursorState(false);
 #if ENABLE_INPUT_SYSTEM
         _playerInput = GetComponent<PlayerInput>();
 #else
@@ -311,20 +302,22 @@ _playerInput.enabled = true;
     }
     void ReleaseCharged() {
         _fire = false;
-        LeanTween.moveLocal(CinemachineCameraTarget,CinemachineCameraTarget.transform.position + (Vector3)Random.insideUnitCircle * 0.2f, 0.05f).setLoopPingPong(2).
-            setOnComplete(()=> CinemachineCameraTarget.transform.position = Vector3.zero);
+        
         //busca el enemigos mas cercano
         CombatEnemies closestEnemy = FindClosesEnemy();
         if (_bulletPrefab) {
             if(_chargeTime >= _recolding) { // disparo carga completado
                 _animator.SetInteger("Fire", 2);
                 _bulletPrefab.GetComponent<BulletController>().enabled = true;
+
                 if (closestEnemy != null) {
                     _bulletPrefab.GetComponent<BulletController>().DetectTransform(closestEnemy.transform);
                 } else {
                     _bulletPrefab.GetComponent<BulletController>().TransformDirection(transform.forward);
 
                 }
+                LeanTween.moveLocal(CinemachineCameraTarget, CinemachineCameraTarget.transform.localPosition + (Vector3)Random.insideUnitCircle * 0.2f, 0.05f).setLoopPingPong(2).
+            setOnComplete(() => CinemachineCameraTarget.transform.localPosition = new Vector3(0,1.5f,0));
             } else {
                 Destroy(_bulletPrefab);
                 _animator.SetInteger("Fire", 1);
@@ -336,6 +329,7 @@ _playerInput.enabled = true;
     public void ISCanFire() {
         _canFire = true;
     }
+   
     CombatEnemies FindClosesEnemy() {
         CombatEnemies closestEnemy = null;
         float closestDistance = Mathf.Infinity;//comenzamos con una distancia muy grande
@@ -351,17 +345,11 @@ _playerInput.enabled = true;
         }
         return closestEnemy;
     }
-    private void OnTriggerEnter(Collider other) {
-        CombatEnemies enemy = other.GetComponent<CombatEnemies>();
-        if (enemy != null) {
-            enemies.Add(enemy);
-        }
+    public void AddEnemies(CombatEnemies enemiesCombat) {
+        enemies.Add(enemiesCombat);
     }
-    private void OnTriggerExit(Collider other) {
-        CombatEnemies enemy = other.GetComponent<CombatEnemies>();
-        if(enemy != null) {
-            // si lo tiene lo eliminamos de la lista de enemigos
-            enemies.Remove(enemy);
-        }
+    public void RemoveEnemies(CombatEnemies enemiesCombat) {
+        enemies.Remove(enemiesCombat);
     }
+
 }

@@ -22,7 +22,7 @@ public class StateMachine : MonoBehaviour
         GameManager.Instance.InicializarContador();
         
         _source = GetComponent<AudioSource>();
-        
+        Playsound(true, 2);
     }
 
     public void ACtivarEstado(MonoBehaviour nuevoEstado) {

@@ -61,8 +61,12 @@ Debug.Log("Iniciando PC");
         switch (indexScene) {
             case 0:
                 _panels[0].gameObject.SetActive(true);
+                if (GameManager.Instance) {
+                    GameManager.Instance.PlaySounds(1);
+                }
                 break;
             case 1:
+
                 _panels[1].gameObject.SetActive(true);
                 _panels[3].gameObject.SetActive(true);
                 break;
@@ -95,7 +99,7 @@ Debug.Log("Iniciando PC");
     }
     public void AddPuntuacion(int cant) {
         _puntuacion += cant;
-        
+        _textPuntuacion.text = "Puntuacion: " + _puntuacion;
         SaveMaxPunt();
     }
     void RestarPunt() {

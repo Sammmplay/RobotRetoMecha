@@ -34,7 +34,11 @@ namespace SD
 
         IEnumerator ChanchEscene(int index)
         {
+            Time.timeScale = 1.0f;
             EsceneMenu.SetActive(true);
+            if (GameManager.Instance) {
+                GameManager.Instance.StopSound();
+            }
             //cargar la escena de forma asyncrona
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(index);
 

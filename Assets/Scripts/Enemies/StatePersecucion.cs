@@ -18,6 +18,7 @@ public class StatePersecucion : MonoBehaviour
     }
 
     private void OnEnable() {
+        GameManager.Instance.SetVolume(0.2f);
         maquinaDeEstados.ChancheMaterial(2);
         maquinaDeEstados.Playsound(true, 3);
         tiempoBuscando = 0;
@@ -45,6 +46,7 @@ public class StatePersecucion : MonoBehaviour
                 GameManager _script = FindObjectOfType<GameManager>();
                 if (_script ) {
                     _script.DestoyPlayer();
+                    maquinaDeEstados.Playsound(false, 0);
                     navMesh.perseguirObjetivo=null;
                     maquinaDeEstados.ACtivarEstado(maquinaDeEstados._estadoPatrulla);
                 }

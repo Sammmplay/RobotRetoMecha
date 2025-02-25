@@ -28,7 +28,6 @@ public class BulletController : MonoBehaviour
     }
     private void OnEnable() {
         transform.SetParent(null);
-        Destroy(gameObject, 10);
     }
     private void Update() {
         if(_targetEnemie == null) {
@@ -48,6 +47,7 @@ public class BulletController : MonoBehaviour
         float distanceThisFrame = Vector3.Distance(starPosition, transform.position);
         totalDistance = distanceThisFrame;
         if (totalDistance >= distanceMax) {
+            UIManagerController.Instance.AddPuntuacion(-2);
             Destroy(gameObject);
         }
     }
@@ -72,7 +72,10 @@ public class BulletController : MonoBehaviour
             }
             if (other.TryGetComponent<CombatEnemies>(out CombatEnemies script)) {
                 script.Dead();
+            } else {
+                UIManagerController.Instance.AddPuntuacion(-2);
             }
+            
             Destroy(gameObject);
         }
         

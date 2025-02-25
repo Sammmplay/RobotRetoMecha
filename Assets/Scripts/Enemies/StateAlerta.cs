@@ -21,6 +21,8 @@ public class StateAlerta : MonoBehaviour
         navMesh.DetenerNavMeshAgent();
         
         maquinaDeEstados.Playsound(true, 1);
+        GameManager.Instance.SetVolume(0.4f);
+        
         tiempoBuscando = 0;
     }
     private void Update() {

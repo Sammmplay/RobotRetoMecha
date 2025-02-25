@@ -21,6 +21,7 @@ public class StatePatrulla : MonoBehaviour
         maquinaDeEstados = GetComponent<StateMachine>();
         controladorVision = GetComponent<ControladorVision>();
         _navmesh = GetComponent<NavMeshAgent>();
+        
     }
     private void Update() {
 
