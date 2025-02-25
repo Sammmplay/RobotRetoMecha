@@ -311,7 +311,8 @@ _playerInput.enabled = true;
     }
     void ReleaseCharged() {
         _fire = false;
-        
+        LeanTween.moveLocal(CinemachineCameraTarget,CinemachineCameraTarget.transform.position + (Vector3)Random.insideUnitCircle * 0.2f, 0.05f).setLoopPingPong(2).
+            setOnComplete(()=> CinemachineCameraTarget.transform.position = Vector3.zero);
         //busca el enemigos mas cercano
         CombatEnemies closestEnemy = FindClosesEnemy();
         if (_bulletPrefab) {

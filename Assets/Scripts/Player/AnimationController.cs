@@ -38,10 +38,10 @@ public class AnimationController : MonoBehaviour
     public void AnimacionEjeRueda() {
         if (_velocity < 0.1f) {
             _source.Stop();
-            _humo.Stop();
+            //_humo.Stop();
         } else {
             _humo.Play();
-            _source.Play();
+            //_source.Play();
         }
         float circunferenciaRueda = 2 * Mathf.PI * radioRueda;
         float revolicionesXSegundo = _velocity / circunferenciaRueda;

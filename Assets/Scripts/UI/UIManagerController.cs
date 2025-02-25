@@ -168,6 +168,13 @@ _plInput.enabled = true;
     }
     #endregion
 
+    public void Reintentar() {
+        LoadEscenChangeManager.instance.LoadEscene(SceneManager.GetActiveScene().buildIndex);
+        GameManager.Instance.RestartCountenemies();
+        StopCronometro();
+        RestarPunt();
+    }
+
     #region Animaciones de la UI
     public void ScaleButtons(RectTransform rect) {
         LeanTween.scale(rect, scaleButtons, 0.2f).setEase(LeanTweenType.easeInBack).setIgnoreTimeScale(true);

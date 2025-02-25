@@ -1,4 +1,5 @@
 using Cinemachine;
+using SD;
 using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,10 +57,11 @@ public class GameManager : MonoBehaviour
     IEnumerator RestarPlayer() {
 
         yield return new WaitForSeconds(6);
-        CinemachineVirtualCamera v_cam= FindObjectOfType<CinemachineVirtualCamera>();
-        v_cam.transform.position = new Vector3(0, 3.5f, -3.5f);
-        v_cam.transform.rotation = Quaternion.Euler(35, 0, 0);
-        StartCoroutine(StartGame());
+        UIManagerController.Instance._panels[5].gameObject.SetActive(true);
+        // Tiempo de juego
+        TextMeshProUGUI _time = GameObject.Find("TimeNumText").GetComponent<TextMeshProUGUI>();
+        _time.text = UIManagerController.Instance.FormatCronometro();
+        //StartCoroutine(StartGame());
     }
     public void InicializarContador() {
         _countTotal++;
