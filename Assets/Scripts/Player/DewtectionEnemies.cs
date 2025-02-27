@@ -10,7 +10,7 @@ public class DewtectionEnemies : MonoBehaviour
     public LayerMask enemyLayer;
     public LayerMask obstacleLayer; // Capa para las paredes u obstáculos
 
-    private List<CombatEnemies> currentlyDetectedEnemies = new List<CombatEnemies>(); // Lista para almacenar enemigos detectados
+    [SerializeField] List<CombatEnemies> currentlyDetectedEnemies = new List<CombatEnemies>(); // Lista para almacenar enemigos detectados
 
     [SerializeField,Range(0,1)] float volume = 1;
     bool isPlay;
@@ -20,9 +20,9 @@ public class DewtectionEnemies : MonoBehaviour
     private void Update() {
         DetectEnemies();
         
-        if (_playerC.enemies.Count > 0) {
+        if (_playerC.enemies.Count > 0 ) {
             GameManager.Instance.SetVolume(volume);
-        } else {
+        } else if(_playerC.enemies == null || _playerC.enemies.Count <=0) {
             GameManager.Instance.SetVolume(1);
         }
     }

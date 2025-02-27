@@ -137,6 +137,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
 _jostycs.SetActive(false);
 _playerInput.enabled = true;
 #endif
+        GameManager.Instance.PlaySounds(1);
     }
     private void Update() {
         GroundedCheck();

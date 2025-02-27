@@ -31,10 +31,12 @@ public class GameManager : MonoBehaviour {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         } else Destroy(gameObject);
+        _source = GetComponent<AudioSource>();
         for (int i = 0; i < _clips.Count; i++) {
             soundDictionary[i] = _clips[i];
         }
-        _source = GetComponent<AudioSource>();
+        
+        
     }
     public void Empezar() {
         _effectStartgame = GameObject.Find("InstantiatePlayer").GetComponent<ParticleSystem>();
