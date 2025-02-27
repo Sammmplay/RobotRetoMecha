@@ -92,6 +92,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
     private float _rotationVelocity;
     private float _verticalVelocity;
     private float _terminalVelocity = 53.0f;
+    EnergySystem _scriptEnergy;
 #if ENABLE_INPUT_SYSTEM
     private PlayerInput _playerInput;
 #endif
@@ -117,6 +118,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
         if (_mainCamera == null) {
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
+        _scriptEnergy = GetComponent<EnergySystem>();
     }
     private void Start() {
         _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
@@ -130,7 +132,7 @@ public class PlayerControllerThirtPerson : MonoBehaviour
 #endif
 #if UNITY_ANDROID
         _jostycs.SetActive(true);
-        _playerInput.enabled = false;
+        //_playerInput.enabled = false;
 #else
 _jostycs.SetActive(false);
 _playerInput.enabled = true;
@@ -267,27 +269,34 @@ _playerInput.enabled = true;
     void Fire() {
         
         if (_input._fire) {//preciona la tecla de Disparo
-            
-            if (!_fire) {
-                if (!_canFire) return;
-                StartCharging();
-            } else {
-                ChargeBullet();
+            if (_scriptEnergy.canAttack()) {
+                if (!_fire) {
+                    if (!_canFire) return;
+                    StartCharging();
+                } else {
+                    ChargeBullet();
 
+                }
+            } else {
+                ShakeCamera();
+                _fire = false;
             }
+            
         }else if (_fire) { // si se suelta el boton
             ReleaseCharged();
             
         }
     }
     void StartCharging() {//precionamos la tecla de disparo 
+       
         _animator.SetInteger("Fire", 0);
         _fire = true;
         _canFire = false;
         _chargeTime = 0;
         //Instanciamos la bala
         _bulletPrefab = Instantiate(_bullet, _dirBullet);
-        
+        _scriptEnergy.canReloading = false;
+
         _bulletPrefab.transform.localScale = _minScale;
 
     }
@@ -297,7 +306,6 @@ _playerInput.enabled = true;
         float scaleProgress = Mathf.Clamp01(_chargeTime / _recolding);
         if (_bulletPrefab) {
             _bulletPrefab.transform.localScale = Vector3.Lerp(_minScale, _maxScale, scaleProgress);
-
         }
     }
     void ReleaseCharged() {
@@ -316,8 +324,9 @@ _playerInput.enabled = true;
                     _bulletPrefab.GetComponent<BulletController>().TransformDirection(transform.forward);
 
                 }
-                LeanTween.moveLocal(CinemachineCameraTarget, CinemachineCameraTarget.transform.localPosition + (Vector3)Random.insideUnitCircle * 0.2f, 0.05f).setLoopPingPong(2).
-            setOnComplete(() => CinemachineCameraTarget.transform.localPosition = new Vector3(0,1.5f,0));
+                _scriptEnergy.ChancheEnergy();
+                ShakeCamera();
+                _scriptEnergy.canReloading = true;
             } else {
                 Destroy(_bulletPrefab);
                 _animator.SetInteger("Fire", 1);
@@ -329,7 +338,10 @@ _playerInput.enabled = true;
     public void ISCanFire() {
         _canFire = true;
     }
-   
+    void ShakeCamera() {
+        LeanTween.moveLocal(CinemachineCameraTarget, CinemachineCameraTarget.transform.localPosition + (Vector3)Random.insideUnitCircle * 0.2f, 0.05f).setLoopPingPong(2).
+            setOnComplete(() => CinemachineCameraTarget.transform.localPosition = new Vector3(0, 1.5f, 0));
+    }
     CombatEnemies FindClosesEnemy() {
         CombatEnemies closestEnemy = null;
         float closestDistance = Mathf.Infinity;//comenzamos con una distancia muy grande

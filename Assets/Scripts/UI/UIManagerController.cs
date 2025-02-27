@@ -28,6 +28,7 @@ public class UIManagerController : MonoBehaviour
     [SerializeField] TextMeshProUGUI _textPuntuacion;
     [Header("PausaGamplay")]
     [SerializeField] public bool _isPlaying;
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
